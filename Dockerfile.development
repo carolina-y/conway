@@ -1,0 +1,8 @@
+FROM ruby:3.4.5-bookworm AS build
+
+RUN apt-get update && apt-get upgrade -y
+
+COPY Gemfile /app/Gemfile
+COPY Gemfile.lock /app/Gemfile.lock
+WORKDIR /app
+RUN bundle install
