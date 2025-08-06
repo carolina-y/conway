@@ -1,5 +1,8 @@
 class ApplicationController < ActionController::API
   rescue_from Idempotency::CacheHit, with: :idempotency_cache_hit
+  rescue_from Idempotency::KeyError do
+    render json: { error: "Idempotency-Key header is a string with at most 100 characters" }, status: :unprocessable_content
+  end
 
   def idempotency_write(status, value)
     return unless idempotency_key.present?
@@ -23,6 +26,12 @@ class ApplicationController < ActionController::API
   end
 
   def idempotency_key
-    @idempotency_key ||= request.headers["Idempotency-Key"]
+    @idempotency_key ||= begin
+      key_read = request.headers["Idempotency-Key"]
+
+      raise Idempotency::KeyError if key_read.is_a?(String) && key_read.length > 100
+
+      key_read
+    end
   end
 end

@@ -13,10 +13,12 @@ As the specification was vague, we assumed:
 
 | Endpoint | Description |
 | -------- | ----------- |
-| POST /boards | Create a new board. Returns the ID of the board. Accepts the state as an array of an array of integers (e.g. `{ "state": [[1, 1], [1, 2], [2, 1], [2, 2]] }`). |
-| POST /boards/:id/next_round | Advances a round. Returns the state in the same format as the array of integers provided in the creation process. As we are in a stateless environment, it does not check for the MAX_ROUNDS value, as we need to check whether MAX_ROUNDS refers to the maximum rounds for a board or for the current request. |
+| POST /boards | Create a new board. Returns the ID of the board. Accepts the state as an array of an array of integers (e.g. `{ "state": [[1, 1], [1, 2], [2, 1], [2, 2]] }`). This endpoint supports providing an idempotency key. |
+| POST /boards/:id/next_round | Advances a round. Returns the state in the same format as the array of integers provided in the creation process. As we are in a stateless environment, it does not check for the MAX_ROUNDS value, as we need to check whether MAX_ROUNDS refers to the maximum rounds for a board or for the current request. This endpoint supports providing an idempotency key. |
 | POST /boards/:id/progress | Progresses the board for either 100 steps (Boards::MAX_ROUNDS) or returns the final state of the board. If erroring, returns a 422 error. |
 | GET /boards/:id/remaining_rounds | Gets the number of remaining rounds to complete the current board status. If the current board is static (e.g. a square), returns 0. If the board is unprocessable, returns -1. |
+
+To provide an idempotency key, meaning that we will in this case make an effort to return the endpoint result instead of processing the request twice, please include an `Idempotency-Key` header for the request. The header is a string with at most 100 characters.
 
 If formal documentation for this endpoint is needed, we can use a gem such as Grape to automatically generate it. In order to keep the time constraints down, other possible additions such as dry-rb (typing the services and using it as a contract would be a nice to have) were not applied.
 
