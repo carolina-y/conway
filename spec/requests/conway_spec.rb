@@ -41,7 +41,7 @@ RSpec.describe "Conway's Game of Life", type: :request do
         expect(response).to have_http_status(:success)
       end
     end
-      
+
     context 'when the board is empty' do
       let(:board) { Board.create!(round: 2) }
 
