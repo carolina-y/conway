@@ -14,7 +14,7 @@ class ApplicationController < ActionController::API
     if cache.present?
       parsed_cache = JSON.parse(cache)
 
-      raise Idempotency::CacheHit.new(parsed_cache['status'].to_sym, parsed_cache['result'])
+      raise Idempotency::CacheHit.new(parsed_cache["status"].to_sym, parsed_cache["result"])
     end
   end
 
@@ -23,6 +23,6 @@ class ApplicationController < ActionController::API
   end
 
   def idempotency_key
-    @idempotency_key ||= request.headers['Idempotency-Key']
+    @idempotency_key ||= request.headers["Idempotency-Key"]
   end
 end
