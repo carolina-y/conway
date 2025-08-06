@@ -1,24 +1,11 @@
-# README
+# Conway's Game of Life
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a sample application implementing a simple API controlling Conway's Game of Life boards.
 
-Things you may want to cover:
+As the specification was vague, we have to assume some things:
 
-* Ruby version
+- the board coordinates are cartesian. This means that if you have an element such as element.x == 0, it might create a cell in x = -1.
+- next round saves the next state. The exercise's language can mislead as it tells to return next state. We'll assume the person will use the endpoint to calculate the progression of the board.
 
-* System dependencies
 
-* Configuration
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...

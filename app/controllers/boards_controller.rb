@@ -1,14 +1,18 @@
 class BoardsController < ApplicationController
-  before_action :find_board, only: [:next, :progress]
+  before_action :find_board, only: [:next_round, :progress, :remaining_rounds]
 
   def create
-    Conway::CreateBoard.new(create_board_params).call
+    board = Conway::CreateBoard.new(state: params[:state]).call
+
+    render json: { id: board.id }, status: :created
   rescue Conway::CreateBoard::ValidationError => e
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
-  def next
-    Conway::NextRound.new(board: @board).call
+  def next_round
+    state = Conway::NextRound.new(board: @board).call
+
+    render json: { state: state }
   end
 
   def progress
@@ -29,9 +33,5 @@ class BoardsController < ApplicationController
 
   def find_board
     @board = Board.find(params[:id])
-  end
-
-  def create_board_params
-    params.require(:board).permit(:width, :height, :initial_state)
   end
 end

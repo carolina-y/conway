@@ -7,4 +7,10 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  resources :boards, only: [:create] do
+    post :next_round, on: :member
+    post :progress, on: :member
+
+    get :remaining_rounds, on: :member
+  end
 end

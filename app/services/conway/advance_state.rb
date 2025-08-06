@@ -1,0 +1,2 @@
+class Conway::AdvanceState
+end
