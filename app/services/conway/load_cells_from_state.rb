@@ -1,4 +1,6 @@
-class Conway::LoadState
+class Conway::LoadCellsFromState
+  class EmptyBoardError < StandardError; end
+
   class Cell
     attr_accessor :x, :y, :alive
 
@@ -9,7 +11,7 @@ class Conway::LoadState
     end
   end
 
-  def initialize(state)
+  def initialize(state: state)
     @state = state
   end
 
@@ -17,6 +19,8 @@ class Conway::LoadState
     load_board_cells
     draw_board
     return_cells
+  rescue EmptyBoardError
+    []
   end
 
   private
@@ -25,6 +29,8 @@ class Conway::LoadState
   attr_accessor :min_x, :min_y, :max_x, :max_y, :board_cells, :cells
 
   def load_board_cells
+    raise EmptyBoardError if state.count.zero?
+
     self.min_x = nil
     self.min_y = nil
     self.max_x = nil

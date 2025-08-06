@@ -2,30 +2,38 @@ class BoardsController < ApplicationController
   before_action :find_board, only: [:next_round, :progress, :remaining_rounds]
 
   def create
-    board = Conway::CreateBoard.new(state: params[:state]).call
+    board = Boards::Create.new(state: params[:state]).call
 
     render json: { id: board.id }, status: :created
-  rescue Conway::CreateBoard::ValidationError => e
-    render json: { error: e.message }, status: :unprocessable_entity
+  rescue Boards::Create::ValidationError => e
+    render json: { error: e.message }, status: :unprocessable_content
   end
 
   def next_round
-    state = Conway::NextRound.new(board: @board).call
+    state = Boards::AdvanceRound.new(board: @board).call
 
-    render json: { state: state }
+    render json: { state: state }, status: :created
   end
 
   def progress
-    Conway::FinalizeBoard.new(board: @board).call
-  rescue Conway::UnconcludedBoardError
+    finalized_board_results = Boards::Finalize.new(board: @board).call
+
+    render json: { state: finalized_board_results[:state] }
+  rescue Boards::Finalize::UnconcludedBoardError
     render json: {
-      error: "Board is not concluded after #{Board.MAX_ROUNDS} rounds"
-    }, status: :unprocessable_entity
+      error: "Board is not concluded after #{Board::MAX_ROUNDS} rounds"
+    }, status: :unprocessable_content
   end
 
   def remaining_rounds
+    finalized_board_results = Boards::Finalize.new(board: @board).call
+
     render json: {
-      remaining_rounds: Conway::RemainingRoundCount.new(board: @board).call
+      remaining_rounds: finalized_board_results[:rounds] - @board.round
+    }
+  rescue Boards::Finalize::UnconcludedBoardError
+    render json: {
+      remaining_rounds: -1
     }
   end
 

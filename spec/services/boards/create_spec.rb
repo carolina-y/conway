@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Conway::CreateBoard do
+RSpec.describe Boards::Create do
   describe '#call' do
     let(:params) do
       {
