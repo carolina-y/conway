@@ -1,8 +1,13 @@
 class BoardsController < ApplicationController
   before_action :find_board, only: [:next_round, :progress, :remaining_rounds]
+  before_action :idempotency_read, only: [:create, :next_round]
 
   def create
+    idempotency_read
+
     board = Boards::Create.new(state: params[:state]).call
+
+    idempotency_write(:created, { id: board.id })
 
     render json: { id: board.id }, status: :created
   rescue Boards::Create::ValidationError => e
@@ -10,7 +15,10 @@ class BoardsController < ApplicationController
   end
 
   def next_round
+    idempotency_read
+
     state = Boards::AdvanceRound.new(board: @board).call
+    idempotency_write(:created, { state: state })
 
     render json: { state: state }, status: :created
   end
