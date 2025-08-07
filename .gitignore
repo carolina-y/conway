@@ -34,3 +34,6 @@
 # Ignore simplecov output.
 /coverage/
 
+# Ignore mysql_data directory.
+/mysql_data/
+

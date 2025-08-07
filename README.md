@@ -26,6 +26,23 @@ If formal documentation for this endpoint is needed, we can use a gem such as Gr
 
 To run the application, you can execute `docker compose up` in this directory and connect to port 3000, which is exported.
 
+To run this application in a production environment, please do the steps necessary to reproduce this sequence. Please replace the `DB_` prefixed variables. Here we use the variables that would work if mysql and redis are running from `docker-compose.yml`.
+
+```
+$ docker build -t conway .
+$ docker run -p 3000:3000 \
+    -e SECRET_KEY_BASE=(random key) \
+    -e DB_HOST=172.17.0.1 \
+    -e DB_PORT=3306 \
+    -e DB_USER=conway \
+    -e DB_PASSWORD=conway \
+    -e DB_NAME=conway_development \
+    -e REDIS_URL=redis://172.17.0.1:6379 \
+    conway
+```
+
+To avoid random Rails shutdowns, we use supervisor to restart the server if necessary.
+
 ## Rails choices
 
 This application uses PORO services to avoid adding new dependencies. This also can be a challenge because either we can show compliance to using a framework (e.g. dry-rb contracts) or doing checks for the input. However, not using a standardized library also made remembered the limitation of Rails strong parameters where it is still problematic to specify clearly that we need an array of integers. Even if the input could be changed to an array of hashes (e.g. `[{ "x": 1, "y": 1 }]`), I made the decision of keeping the previously intended state definition to remember we do not always control the input a third party will send to your server (e.g. a webhook server).

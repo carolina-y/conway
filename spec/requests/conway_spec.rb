@@ -5,8 +5,50 @@ RSpec.describe "Conway's Game of Life", type: :request do
     state.sort_by { |cell| [cell[0], cell[1]] }
   end
 
+  describe 'Idempotency key' do
+    context 'with an invalid idempotency key' do
+      let(:state) { [[1, 2], [2, 2], [3, 2]] }
+      let(:idempotency_key) { '0' * 101 }
+
+      it 'errors with unprocessable content' do
+        post boards_path, params: { state: state }.to_json, headers: { 'Idempotency-Key' => idempotency_key, 'Content-Type': 'application/json' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(Board.count).to eq(0)
+      end
+    end
+
+  end
+
   describe 'POST /boards' do
-    describe 'with valid state' do
+    context 'with an idempotency key' do
+      let(:state) { [[1, 2], [2, 2], [3, 2]] }
+      let(:idempotency_key) { SecureRandom.uuid }
+
+      it 'creates the board and returns a new board ID' do
+        post boards_path, params: { state: state }.to_json, headers: { 'Idempotency-Key' => idempotency_key, 'Content-Type': 'application/json' }
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['id']).to be_a(Integer)
+        expect(Board.count).to eq(1)
+      end
+    end
+
+    context 'with an idempotency key, querying twice' do
+      let(:state) { [[1, 2], [2, 2], [3, 2]] }
+      let(:idempotency_key) { SecureRandom.uuid }
+
+      it 'creates the board and returns a new board ID' do
+        post boards_path, params: { state: state }.to_json, headers: { 'Idempotency-Key' => idempotency_key, 'Content-Type': 'application/json' }
+        post boards_path, params: { state: state }.to_json, headers: { 'Idempotency-Key' => idempotency_key, 'Content-Type': 'application/json' }
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['id']).to be_a(Integer)
+        expect(Board.count).to eq(1)
+      end
+    end
+
+    context 'with valid state' do
       let(:state) { [[1, 2], [2, 2], [3, 2]] }
 
       it 'creates the board and returns the board ID' do
@@ -17,7 +59,7 @@ RSpec.describe "Conway's Game of Life", type: :request do
       end
     end
 
-    describe 'with an invalid state' do
+    context 'with an invalid state' do
       let(:invalid_state) { [[1, 2], ['invalid', 2], [3, 2]] }
 
       it 'returns an error when the state is invalid' do
