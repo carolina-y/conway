@@ -17,7 +17,6 @@ RSpec.describe "Conway's Game of Life", type: :request do
         expect(Board.count).to eq(0)
       end
     end
-
   end
 
   describe 'POST /boards' do
