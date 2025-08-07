@@ -24,7 +24,21 @@ If formal documentation for this endpoint is needed, we can use a gem such as Gr
 
 ## Running this application
 
-To run the application, you can execute `docker compose up` in this directory and connect to port 3000, which is exported.
+Before running the application locally, please run these commands to build the application and do the first database migration (we can use db:migrate here):
+
+```
+$ docker compose build
+$ docker compose run conway rails db:migrate
+```
+
+And, to run the application locally:
+
+```
+$ docker compose up
+```
+
+
+### "Production"
 
 To run this application in a production environment, please do the steps necessary to reproduce this sequence. Please replace the `DB_` prefixed variables. Here we use the variables that would work if mysql and redis are running from `docker-compose.yml`.
 

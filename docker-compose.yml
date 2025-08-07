@@ -17,6 +17,9 @@ services:
     tty: true
     networks:
       - conway_network
+    depends_on:
+      - mysql
+      - redis
   mysql:
     image: mysql:8.0
     environment:
