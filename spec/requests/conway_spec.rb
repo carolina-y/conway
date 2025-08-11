@@ -111,7 +111,7 @@ RSpec.describe "Conway's Game of Life", type: :request do
       end
     end
 
-    context 'when trying to advance an invalid board'do
+    context 'when trying to advance an invalid board' do
       it 'returns a 404 error' do
         post next_round_board_path(id: 9999)
 
