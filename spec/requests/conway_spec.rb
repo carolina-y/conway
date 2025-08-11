@@ -120,6 +120,50 @@ RSpec.describe "Conway's Game of Life", type: :request do
       end
     end
 
+    context 'when needing to avoid the left corner' do
+      let(:board) { create(:board, :left_corner_test) }
+
+      it 'does not allow cells outside the board' do
+        post next_round_board_path(board)
+
+        expect(sort_state(json_response['state'])).to eq(sort_state([[0, 1], [1, 1]]))
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context 'when needing to avoid the right corner' do
+      let(:board) { create(:board, :right_corner_test) }
+
+      it 'does not allow cells outside the board' do
+        post next_round_board_path(board)
+
+        expect(sort_state(json_response['state'])).to eq(sort_state([[Board::MAX_DIMENSIONS, 1], [Board::MAX_DIMENSIONS - 1, 1]]))
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context 'when needing to avoid the top' do
+      let(:board) { create(:board, :top_test) }
+
+      it 'does not allow cells outside the board' do
+        post next_round_board_path(board)
+
+        expect(sort_state(json_response['state'])).to eq(sort_state([[1, Board::MAX_DIMENSIONS], [1, Board::MAX_DIMENSIONS - 1]]))
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context 'when needing to avoid the bottom' do
+      let(:board) { create(:board, :bottom_test) }
+
+      it 'does not allow cells outside the board' do
+        post next_round_board_path(board)
+
+        expect(sort_state(json_response['state'])).to eq(sort_state([[1, 0], [1, 1]]))
+        expect(response).to have_http_status(:success)
+      end
+    end
+
     context 'when the board is empty' do
       let(:board) { create(:board) }
 
