@@ -73,5 +73,6 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
-          # REDIS_URL: redis://localhost:6379/0
+          REDIS_URL: redis://localhost:6379/0
+          DB_HOST: localhost
         run: bin/rails db:test:prepare test
