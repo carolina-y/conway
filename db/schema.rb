@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_05_225116) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_11_185301) do
   create_table "board_cells", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "board_id", null: false
     t.integer "x", null: false
@@ -24,6 +24,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_05_225116) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "round", default: 1, null: false
+    t.integer "width", null: false
+    t.integer "height", null: false
   end
 
   add_foreign_key "board_cells", "boards"
