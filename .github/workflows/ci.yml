@@ -76,3 +76,6 @@ jobs:
           REDIS_URL: redis://localhost:6379/0
           DB_HOST: 127.0.0.1
         run: bin/rails db:test:prepare && bundle exec rspec spec
+      - uses: joshmfrankel/simplecov-check-action@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
