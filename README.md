@@ -13,9 +13,9 @@ As the specification was vague, we assumed:
 
 | Endpoint | Description |
 | -------- | ----------- |
-| POST /boards | Create a new board. Returns the ID of the board. Accepts the state as an array of an array of integers (e.g. `{ "state": [[1, 1], [1, 2], [2, 1], [2, 2]] }`). This endpoint supports providing an idempotency key. |
-| POST /boards/:id/next_round | Advances a round. Returns the state in the same format as the array of integers provided in the creation process. As we are in a stateless environment, it does not check for the MAX_ROUNDS value, as we need to check whether MAX_ROUNDS refers to the maximum rounds for a board or for the current request. This endpoint supports providing an idempotency key. |
-| POST /boards/:id/progress | Progresses the board for either 100 steps (Boards::MAX_ROUNDS) or returns the final state of the board. If erroring, returns a 422 error. |
+| POST /boards | Create a new board. Returns the ID of the board. Accepts the state as an array of an array of integers and a board of up to 100x100 (x and y 0-99) (e.g. `{ "state": [[1, 1], [1, 2], [2, 1], [2, 2]], width: 50, height: 50 }`). This endpoint supports providing an idempotency key. Returns a JSON with the board ID in an `{ id: 1 }` format. |
+| POST /boards/:id/next_round | Advances a round. Returns the state in the same format as the array of integers provided in the creation process. As we are in a stateless environment, it does not check for the MAX_ROUNDS value, as we need to check whether MAX_ROUNDS refers to the maximum rounds for a board or for the current request. This endpoint supports providing an idempotency key. Returns the state in the same format as the `state` hash above (e.g. `{ "state": [[1, 1], [1, 2], [2, 1], [2, 2]], width: 50, height: 50 }`). |
+| POST /boards/:id/progress | Progresses the board for either 100 steps (Boards::MAX_ROUNDS) or returns the final state of the board. If erroring, returns a 422 error. Returns the board in the same format (e.g. `{ "state": [[1, 1], [1, 2], [2, 1], [2, 2]], width: 50, height: 50 }`). |
 | GET /boards/:id/remaining_rounds | Gets the number of remaining rounds to complete the current board status. If the current board is static (e.g. a square), returns 0. If the board is unprocessable, returns -1. |
 
 To provide an idempotency key, meaning that we will in this case make an effort to return the endpoint result instead of processing the request twice, please include an `Idempotency-Key` header for the request. The header is a string with at most 100 characters.

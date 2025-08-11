@@ -176,7 +176,7 @@ RSpec.describe "Conway's Game of Life", type: :request do
     end
   end
 
-  describe 'GET /boards/:id/remaining_states' do
+  describe 'GET /boards/:id/remaining_rounds' do
     context 'with a board that cannot be concluded' do
       let(:board) { create(:board, :infinite_loop) }
 
@@ -190,6 +190,17 @@ RSpec.describe "Conway's Game of Life", type: :request do
 
     context 'with a board that can be concluded' do
       let(:board) { create(:board, :with_square) }
+
+      it 'returns the remaining rounds count' do
+        get remaining_rounds_board_path(board)
+
+        expect(response).to have_http_status(:success)
+        expect(json_response['remaining_rounds']).to eq(0)
+      end
+    end
+
+    context 'with a board in another round that is already concluded' do
+      let(:board) { create(:board, :with_square, round: 2) }
 
       it 'returns the remaining rounds count' do
         get remaining_rounds_board_path(board)

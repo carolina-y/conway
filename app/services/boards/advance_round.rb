@@ -32,6 +32,7 @@ class Boards::AdvanceRound
   def save_state
     ActiveRecord::Base.transaction do
       board.increment!(:round)
+      board.save!
       board.board_cells.delete_all
 
       next_round_state.each do |cell|

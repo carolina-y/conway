@@ -25,13 +25,21 @@ class BoardsController < ApplicationController
     state = Boards::AdvanceRound.new(board: @board).call
     idempotency_write(:created, { state: state })
 
-    render json: { state: state }, status: :created
+    render json: {
+      state: state,
+      width: @board.width,
+      height: @board.height
+    }, status: :created
   end
 
   def progress
     finalized_board_results = Boards::Finalize.new(board: @board).call
 
-    render json: { state: finalized_board_results[:state] }
+    render json: {
+      state: finalized_board_results[:state],
+      width: @board.width,
+      height: @board.height
+    }
   rescue Boards::Finalize::UnconcludedBoardError
     render json: {
       error: "Board is not concluded after #{Board::MAX_ROUNDS} rounds"
@@ -42,7 +50,7 @@ class BoardsController < ApplicationController
     finalized_board_results = Boards::Finalize.new(board: @board).call
 
     render json: {
-      remaining_rounds: finalized_board_results[:rounds] - @board.round
+      remaining_rounds: finalized_board_results[:rounds]
     }
   rescue Boards::Finalize::UnconcludedBoardError
     render json: {
