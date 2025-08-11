@@ -302,7 +302,7 @@ DEPENDENCIES
   bootsnap
   brakeman
   debug
-  factory_bot_rails
+  factory_bot_rails (~> 6.5.0)
   mysql2
   puma (>= 5.0)
   rails (~> 8.0.2)
