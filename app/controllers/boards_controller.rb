@@ -5,7 +5,12 @@ class BoardsController < ApplicationController
   def create
     idempotency_read
 
-    board = Boards::Create.new(state: params[:state]).call
+    # Ideally, use dry-rb or similar to separate validation from the service.
+    board = Boards::Create.new(
+      state: params[:state],
+      height: params[:height],
+      width: params[:width]
+    ).call
 
     idempotency_write(:created, { id: board.id })
 

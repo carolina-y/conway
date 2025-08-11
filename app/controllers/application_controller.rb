@@ -4,7 +4,7 @@ class ApplicationController < ActionController::API
     render json: { error: "Idempotency-Key header is a string with at most 100 characters" }, status: :unprocessable_content
   end
   rescue_from ActiveRecord::RecordNotFound do |e|
-    render json: e.message, status: :not_found
+    render json: { error: e.message }, status: :not_found
   end
 
   def idempotency_write(status, value)
