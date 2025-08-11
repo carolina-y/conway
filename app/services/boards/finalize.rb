@@ -35,7 +35,7 @@ class Boards::Finalize
 
   def return_stats_and_state
     {
-      rounds: current_round,
+      rounds: current_round - board.round,
       state: state
     }
   end

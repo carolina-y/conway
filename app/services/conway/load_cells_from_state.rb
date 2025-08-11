@@ -50,6 +50,11 @@ class Conway::LoadCellsFromState
 
       [cell[0], cell[1]]
     end
+
+    self.min_x = 1 if min_x <= 0
+    self.min_y = 1 if min_y <= 0
+    self.max_x = Board::MAX_DIMENSIONS - 1 if max_x >= Board::MAX_DIMENSIONS
+    self.max_y = Board::MAX_DIMENSIONS - 1 if max_y >= Board::MAX_DIMENSIONS
   end
 
   def draw_board
